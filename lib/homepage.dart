@@ -2,81 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
+import 'package:storex/controller/news_controller.dart';
 
-import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
-import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
-import 'package:storex/controller/productcontroller.dart';
+class HomePage extends StatelessWidget {
+  HomePage({super.key});
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final NewsController _newsController = Get.put(NewsController());
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white10,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.black,
-          ),
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.shopping_cart,
-                color: Colors.black,
-              ))
-        ],
+        backgroundColor: Color.fromARGB(255, 45, 1, 53),
+        centerTitle: true,
+        title: Text('News'),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
+      body: Obx(() => _newsController.isLoading.value
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView.builder(
+              itemCount: _newsController.articles.length,
+              physics: const BouncingScrollPhysics(),
+              itemBuilder: ((context, index) {
+                return Container(
+                  margin: const EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.white, width: 1)),
+                  child: Center(
                     child: Text(
-                  'StoreX',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
+                      _newsController.articles[index].title!,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 67, 62, 62),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                )),
-                IconButton(
-                    onPressed: () {}, icon: Icon(Icons.view_list_rounded)),
-                IconButton(onPressed: () {}, icon: Icon(Icons.grid_view))
-              ],
-            ),
-          ),
-          Expanded(
-            child: StaggeredGridView.countBuilder(
-                padding: EdgeInsets.all(10),
-                crossAxisCount: 2,
-                itemCount: 1000,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                itemBuilder: (context, index) {
-                  return Container(
-                    height: 200,
-                    width: 100,
-                    decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(10)),
-                  );
-                },
-                staggeredTileBuilder: (index) => StaggeredTile.fit(1)),
-          ),
-        ],
-      ),
+                );
+              }),
+            )),
     );
   }
 }
